@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            display: flex;
+        }
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background-color: #001f3f; /* Navy Blue */
+            padding: 15px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            color: white;
+        }
+        .sidebar h2 {
+            color: white;
+            font-weight: bold;
+        }
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        .sidebar ul li img {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+        .sidebar ul li a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+        }
+        .container {
+            flex: 1;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .btn-primary {
+            background-color: #001f3f;
+            border-color: #001f3f;
+            color: white;
+            font-weight: bold;
+        }
+        .btn-primary:hover {
+            background-color: #001a35;
+            border-color: #001a35;
+        }
+        .form-group label {
+            color: #001f3f;
+            font-weight: bold;
+        }
+        .alert-info {
+            background-color: #001f3f;
+            color: white;
+            border-color: #001a35;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Contacts</h2>
+        <ul>
+            <li><a href="/"><img src="{{ url_for('static', filename='image/profile1.jpg') }}" alt="Contact 1"> Mitch</a></li>
+            <li><a href="/"><img src="{{ url_for('static', filename='image/profile2.jpg') }}" alt="Contact 2"> Rita</a></li>
+            <li><a href="/"><img src="{{ url_for('static', filename='image/profile3.png') }}" alt="Contact 3"> Mactilda</a></li>
+            <li><a href="/"><img src="{{ url_for('static', filename='image/profile4.jpg') }}" alt="Contact 4"> Reis</a></li>
+        </ul>
+    </div>
+    <div class="container">
+        <h1 class="mt-5">Chat Room</h1>
+{% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('send_message') }}" class="mt-4">
+            <div class="form-group">
+                <label for="phone_number">Phone Number</label>
+                <input type="text" class="form-control" id="phone_number" name="phone_number" required>
+            </div>
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea class="form-control" id="message" name="message" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Send Encrypted Message</button>
+        </form>
+
+  <form method="POST" action="{{ url_for('decrypt') }}" class="mt-4">
+            <div class="form-group">
+                <label for="encrypted_message">Encrypted Message</label>
+                <textarea class="form-control" id="encrypted_message" name="encrypted_message" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="decryption_key">Decryption Key</label>
+                <input type="text" class="form-control" id="decryption_key" name="decryption_key" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Decrypt Message</button>
+        </form>
+        {% if decrypted_message %}
+            <div class="mt-4">
+                <label for="decrypted_message">Decrypted Message:</label>
+                <textarea class="form-control" id="decrypted_message" name="decrypted_message" rows="3" readonly>{{ decrypted_message }}</textarea>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
